@@ -99,8 +99,9 @@ void App::onIpcReceived(const std::shared_ptr<ipc::Packet>& packet)
         return;
     }
     auto download_config = nlohmann::json::parse(packet->payload);
-    SPDLOG_DEBUG("[updater] Download image: download url {}", download_config["bucketUrl"]);
-    const auto downloader = fmt::format("wget -O {} \"{}\"", m_config["download_path"], download_config["bucketUrl"]);
+    const auto download_url = download_config["bucketUrl"].get<std::string>();
+    SPDLOG_DEBUG("[updater] Download image: download url {}", download_url);
+    const auto downloader = fmt::format("wget -O {} \"{}\"", m_config["download_path"], download_url);
     std::system(downloader.c_str());
     SPDLOG_DEBUG("[updater] Download image: done.");
     // file is downloaded
